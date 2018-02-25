@@ -12,25 +12,49 @@ MattHello <- "Hellow world! This is Matt."
 print(MattHello)
 
 
-
+# setwd()   # set working directory here if needed
   
 # LOAD LIBRARIES
 
-#We will start by using rrecsys; 
-# recommenderlab is another option but some functionality we need is missing.
-#Also: recosystem is a wrapper for the libmf C++ matrix factorization program.
-#At scale we may need that: 
+# Initial installation -- these lines only need to be run once.
+# Add additional libraries needed to this list.  
 
-if(!"rrecsys" %in% rownames(installed.packages())){
-  install.packages("rrecsys")
-  }
+list.of.packages <- c("tidyverse", "rrecsys","shiny","shinydashboard",
+                      "network","igraph","tidygraph")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+
+
+
+# RECOMMENDER SYSTEM LIBRARIES
+# We will start by using the rrecsys library. 
+# recommenderlab is another option but some functionality we need is missing.
+# Also: recosystem is a wrapper for the libmf matrix factorization program.
+# It's written in C++. Very powerful and fast at scale if needed. 
+
 library(rrecsys)
 
-set.seed(8888)   # for replicability. Note: Changing order may alter results.
-# setwd()   # set working directory here
+library(tidyverse) # lots of 
+library(shiny,shinydashboard) # for our dashboard
+
+# NETWORK ANALYSIS LIBRARIES -- possible conflict here.  
+# We will start with the "igraph" package, and look at the network, tidygraph, 
+# sna, etc. packages later
+library(igraph)
+#library(intergraph) # add if you need to switch between the formats of different  
+                     # graph packages.
+
+
+# SET SEED FOR REPLICABILITY
+set.seed(8888)   # Note: Changing order may alter results.
+
+
+
 
 
 #####  LOAD DATA FROM SOCIAL FEED MANAGER ######
+
+
 
 
 
@@ -43,7 +67,7 @@ set.seed(8888)   # for replicability. Note: Changing order may alter results.
 
 
 
-#### TO BE ADDED LATER: CODE FOR SHINY DASHBOARD 
+#### CODE FOR SHINY DASHBOARD 
 
 
 
