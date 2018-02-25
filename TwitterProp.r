@@ -5,6 +5,9 @@
 ##############################
 
 
+### NOTE: Some of these functions have calls with the same name.
+### This can lead to masking 
+
 #INITIAL TEST TO ENSURE EVERYONE CAN MAKE GITHUB COMMITS.
 #I've make a quick Hello World program below. Add your own.
 
@@ -17,10 +20,14 @@ print(MattHello)
 # LOAD LIBRARIES
 
 # Initial installation -- these lines only need to be run once.
-# Add additional libraries needed to this list.  
+# Add additional libraries that might need to be installed to the list below.  
 
-list.of.packages <- c("tidyverse", "rrecsys","shiny","shinydashboard",
-                      "network","igraph","tidygraph")
+list.of.packages <- c("tidyverse",                               # basic data sci tools
+                      "rrecsys","recosystem", "recommenderlab",  # recsys libs
+                      "shiny","shinydashboard",                  # shiny libs
+                      "network","igraph","tidygraph", "sna",    # graph / network libs
+                      "viznetwork", "networkd3", "ggraph")       #network visualization libs
+
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 
@@ -32,17 +39,18 @@ if(length(new.packages)) install.packages(new.packages)
 # Also: recosystem is a wrapper for the libmf matrix factorization program.
 # libmf is written in C++. Very powerful and fast at scale if needed. 
 
-library(rrecsys)
+library(rrecsys)  # Change if we chose a different recommender library
 
 library(tidyverse) # lots of basic tools
 library(shiny,shinydashboard) # for our dashboard
 
-# NETWORK ANALYSIS LIBRARIES -- possible conflict here.  
+# NETWORK ANALYSIS LIBRARIES -- possible function name conflict here.  
 # We will start with the "igraph" package, and look at the network, tidygraph, 
-# sna, etc. packages later
+# sna, etc. packages later if needed.
 
-library(igraph,tidygraph)    # Allow us to use network objects
-library(viznetwork,networkd3)   # For network visualizations
+library(igraph)    # Allow us to use network objects
+library(viznetwork,networkd3,ggraph)   # For network visualizations
+# library(tidygraph) # Alternative to igraph, with better syntax and so neat tricks.
 
 
 #library(intergraph) # add if you need to switch between the formats of different  
