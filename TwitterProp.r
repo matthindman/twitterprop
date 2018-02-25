@@ -101,6 +101,7 @@ set.seed(8888)   # Note: Changing order may alter results.
 # Great intro to the igraph package below.  Start by checking this out: 
 # http://kateto.net/networks-r-igraph  
 # Also has a good refresher on R basics.  
+# Here is the real igraph docs: https://cran.r-project.org/web/packages/igraph/igraph.pdf 
 
 
 
