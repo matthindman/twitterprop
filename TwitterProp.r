@@ -26,26 +26,31 @@ if(length(new.packages)) install.packages(new.packages)
 
 
 
-# RECOMMENDER SYSTEM LIBRARIES
+# RECOMMENDER SYSTEM LIBRARY
 # We will start by using the rrecsys library. 
 # recommenderlab is another option but some functionality we need is missing.
 # Also: recosystem is a wrapper for the libmf matrix factorization program.
-# It's written in C++. Very powerful and fast at scale if needed. 
+# libmf is written in C++. Very powerful and fast at scale if needed. 
 
 library(rrecsys)
 
-library(tidyverse) # lots of 
+library(tidyverse) # lots of basic tools
 library(shiny,shinydashboard) # for our dashboard
 
 # NETWORK ANALYSIS LIBRARIES -- possible conflict here.  
 # We will start with the "igraph" package, and look at the network, tidygraph, 
 # sna, etc. packages later
-library(igraph)
+
+library(igraph,tidygraph)    # Allow us to use network objects
+library(viznetwork,networkd3)   # For network visualizations
+
+
 #library(intergraph) # add if you need to switch between the formats of different  
                      # graph packages.
 
 
 # SET SEED FOR REPLICABILITY
+
 set.seed(8888)   # Note: Changing order may alter results.
 
 
@@ -54,7 +59,8 @@ set.seed(8888)   # Note: Changing order may alter results.
 
 #####  LOAD DATA FROM SOCIAL FEED MANAGER ######
 
-
+# NOTE: igraph and similar can take an edgelist and easily turn it into an 
+# adjacency matrix.  So that at least is easy!  
 
 
 
