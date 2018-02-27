@@ -10,7 +10,7 @@
 ### Document this if you see it, so we can fix the problem. 
 
 #INITIAL TEST TO ENSURE EVERYONE CAN MAKE GITHUB COMMITS.
-#I've make a quick Hello World statement below. Add your own.
+#I've made a quick Hello World statement below. Add your own.
 
 MattHello <- "Hellow world! This is Matt."
 print(MattHello)
@@ -28,7 +28,7 @@ print(MattHello)
 
 
 list.of.packages <- c("tidyverse","tidytext","tm",               # basic data sci tools
-                      "twitteR","streamR","ROAuth",              # twitter specific libs
+                      "twitteR","streamR","ROAuth","rtweet",    # twitter specific libs
                       "lubridate",                               # time/ date tools
                       "rrecsys","recosystem", "recommenderlab",  # recommender sys libs
                       "shiny","shinydashboard",                  # shiny libs
@@ -43,10 +43,14 @@ if(length(new.packages)) install.packages(new.packages)
 # TWITTER SPECIFIC LIBRARIES
 # Allow you to access / pull tweets directly from Twitter 
 # We won't use at first but may be useful for prototyping.
-# Also has a good structure for treating users and tweets as R objects. 
-# Docs here: https://cran.r-project.org/web/packages/twitteR/twitteR.pdf
+
+# NOTE:twitteR seems to be starting to be replaced by newer rtweet package.  
+# Both have a good structure for treating users, tweets, followers etc. as R objects. 
+# Docs here: https://cran.r-project.org/web/packages/twitteR/twitteR.pdf and for rtweet
+# https://cran.r-project.org/web/packages/rtweet/rtweet.pdf 
 
 # library(twitteR)   # Twitter libs, but commented out for now
+# library(rtweet)   # Alternative Twitter library
 
 
 # RECOMMENDER SYSTEM LIBRARY
