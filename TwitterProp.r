@@ -15,6 +15,11 @@
 MattHello <- "Hellow world! This is Matt."
 print(MattHello)
 
+NikkiHello <- "Hellow world! This is Nikki."
+print(NikkiHello)
+
+SpencerHello <- "Hello world! This is Spencer."
+print(SpencerHello)
 
 # setwd()   # set working directory here if needed
   
