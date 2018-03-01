@@ -33,14 +33,16 @@ print(SpencerHello)
 
 
 list.of.packages <- c("tidyverse","tidytext","tm","chunked",     # basic data sci tools
+                      "sparklyr",                                # spark db interface
                       "twitteR","streamR","ROAuth","rtweet",    # twitter specific libs
                       "lubridate",                               # time/ date tools
                       "rrecsys","recosystem", "recommenderlab",  # recommender sys libs
                       "shiny","shinydashboard",                  # shiny libs
                       "network","igraph","tidygraph", "sna",     # graph / network libs
                       "intergraph",                              # translation btwn graph libs
-                      "ggraph")                                  # network visualization libs
-
+                      "ggraph",                                  # network visualization libs
+                      "keras")                                   # TensorFlow. For fun. :) 
+                      
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 
@@ -54,8 +56,8 @@ if(length(new.packages)) install.packages(new.packages)
 # Docs here: https://cran.r-project.org/web/packages/twitteR/twitteR.pdf and for rtweet
 # https://cran.r-project.org/web/packages/rtweet/rtweet.pdf 
 
-# library(twitteR)   # Twitter libs, but commented out for now
-# library(rtweet)   # Alternative Twitter library
+# library(twitteR)   # popular Twitter lib, but commented out for now
+library(rtweet)   # Alternative Twitter library. We'll try this to start with.  
 
 
 # RECOMMENDER SYSTEM LIBRARY
@@ -129,6 +131,9 @@ set.seed(8888)   # Note: Changing order may alter results.
 
 # Start with the sample code here:
 # https://rstudio.github.io/shinydashboard/get_started.html
+
+# As an example, here is the Hamilton68 dashboard:
+# https://dashboard.securingdemocracy.org/ 
 
 
 
