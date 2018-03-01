@@ -39,8 +39,9 @@ list.of.packages <- c("tidyverse","tidytext","tm","chunked",     # basic data sc
                       "shiny","shinydashboard",                  # shiny libs
                       "network","igraph","tidygraph", "sna",     # graph / network libs
                       "intergraph",                              # translation btwn graph libs
-                      "ggraph")                                  # network visualization libs
-
+                      "ggraph",                                  # network visualization libs
+                      "keras")                                   # TensorFlow. For fun. :) 
+                      
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 
