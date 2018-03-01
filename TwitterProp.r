@@ -32,7 +32,7 @@ print(SpencerHello)
 # And then calling individual libraries only when needed.  
 
 
-list.of.packages <- c("tidyverse","tidytext","tm",               # basic data sci tools
+list.of.packages <- c("tidyverse","tidytext","tm","chunked",     # basic data sci tools
                       "twitteR","streamR","ROAuth","rtweet",    # twitter specific libs
                       "lubridate",                               # time/ date tools
                       "rrecsys","recosystem", "recommenderlab",  # recommender sys libs
