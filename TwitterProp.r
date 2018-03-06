@@ -20,7 +20,9 @@ print(NikkiHello)
 
 SpencerHello <- "Hello world! This is Spencer."
 print(SpencerHello)
-print(SpencerHello)
+
+TaishiHello <- "Hello world! This is Taishi."
+print(TaishiHello)
 
 # setwd()   # set working directory here if needed
   
