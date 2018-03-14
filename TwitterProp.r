@@ -35,20 +35,29 @@ print(TaishiHello)
 # And then calling individual libraries only when needed.  
 
 
-list.of.packages <- c("tidyverse","tidytext","tm","chunked",     # basic data sci tools
-                      "sparklyr",                                # spark db interface
+list.of.packages <- c("tidyverse","tidytext","tm","chunked",    # basic data sci tools
+                      "sparklyr","rsparkling",                  # spark db interface
+                      "h2o",                                    # big data ml on clusters
                       "twitteR","streamR","ROAuth","rtweet",    # twitter specific libs
-                      "lubridate",                               # time/ date tools
-                      "rrecsys","recosystem", "recommenderlab",  # recommender sys libs
-                      "shiny","shinydashboard",                  # shiny libs
-                      "network","igraph","tidygraph", "sna",     # graph / network libs
-                      "intergraph",                              # translation btwn graph libs
-                      "ggraph",                                  # network visualization libs
-                      "keras")                                   # TensorFlow. For fun. :) 
+                      "lubridate",                              # time/ date tools
+                      "rrecsys","recosystem", "recommenderlab", # recommender sys libs
+                      "shiny","shinydashboard",                 # shiny libs
+                      "network","igraph","tidygraph", "sna",    # graph / network libs
+                      "intergraph",                             # translation btwn graph libs
+                      "ggraph",                                 # network visualization libs
+                      "keras")                                  # TensorFlow. For fun. :) 
                       
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 
+
+# Install Mike Kearney's botornot tool
+
+if (!requireNamespace("devtools", quietly = TRUE)) {
+  install.packages("devtools")
+}
+devtools::install_github("mkearney/botornot")
+library(botornot)
 
 # TWITTER SPECIFIC LIBRARIES
 # Allow you to access / pull tweets directly from Twitter 
