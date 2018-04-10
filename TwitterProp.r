@@ -20,7 +20,6 @@ print(NikkiHello)
 
 SpencerHello <- "Hello world! This is Spencer."
 print(SpencerHello)
-print(SpencerHello)
 
 # setwd()   # set working directory here if needed
   
@@ -132,5 +131,192 @@ set.seed(8888)   # Note: Changing order may alter results.
 # Start with the sample code here:
 # https://rstudio.github.io/shinydashboard/get_started.html
 
-
-
+#### CODE FOR TEXT MINING ####
+library(qdap)#Word Frequencies
+library(readr)#Read Data from CSV
+library(tm)#Text Mining,create dtm and tdm
+library(stringr)#Extract word from sentence
+library(dplyr)
+library(wordcloud)#Create Word Cloud
+library(SnowballC)
+library(topicmodels)#Build Topic Models
+sample <- fake1[1:5000,]#choose 5000 twitter as sample
+text <- as.character(sample$text)
+text <- iconv(text, 'utf-8', 'ascii', sub='')
+#clean text
+clean_tweet = gsub("&amp", "", text)
+clean_tweet = gsub("(RT|via)((?:\\b\\W*@\\w+)+)", "", clean_tweet)
+clean_tweet = gsub("@\\w+", "", clean_tweet)
+clean_tweet = gsub("[[:punct:]]", "", clean_tweet)
+clean_tweet = gsub("[[:digit:]]", "", clean_tweet)
+clean_tweet = gsub("http\\w+", "", clean_tweet)
+clean_tweet = gsub("[ \t]{2,}", "", clean_tweet)
+clean_tweet = gsub("^\\s+|\\s+$", "", clean_tweet)
+#convert texts into corpus format
+tweet_source <- VectorSource(clean_tweet)
+tweet_corpus <- VCorpus(tweet_source)
+#clean corpus format text
+clean_corpus <- function(corpus){
+  corpus <- tm_map(corpus, content_transformer(tolower))
+  corpus <- tm_map(corpus, removeWords, stopwords("en"))
+  corpus <- tm_map(corpus, stripWhitespace)
+  corpus <- tm_map(corpus, stemDocument)
+  return(corpus)
+}
+tweet <- clean_corpus(tweet_corpus)
+tweet[[10]][1]
+#Create tdm and dtm(divide sentences into words)
+tweet_dtm <- DocumentTermMatrix(tweet)
+dim(tweet_dtm)
+tweet_m1 <- as.matrix(tweet_dtm)
+tweet_m1[148:150,2587:2590]
+tweet_tdm <- TermDocumentMatrix(tweet)
+dim(tweet_tdm)
+tweet_m2 <- as.matrix(tweet_tdm)
+tweet_m2[2587:2590,148:150]
+term_frequency<-rowSums(tweet_m2)
+term_frequency<-sort(term_frequency,decreasing=TRUE)
+# Plot a barchart of the 30 most common words
+barplot(term_frequency[1:30],col="tan",las=2)
+# Create a wordcloud for the values in word_freqs
+color<-c("grey80", "darkgoldenrod1","red")
+wordcloud(word_freqs$term, 
+          word_freqs$num, 
+          max.words = 100, 
+          colors = color)
+###Part 2: Use tidy format to do sentiment analysis and bigrams analysis
+library(ggplot2)
+install.packages("devtools")
+library(devtools)
+#devtools::install_github("ropensci/tokenizers")
+library(tokenizers)
+library(tidytext)
+library(tidyr)
+library(magrittr)
+library(reshape2)
+library(igraph)
+library(ggraph)
+library(widyr)
+tweet2 <- sample[,c(24,6)]
+tweet2$text <- as.character(tweet2$text)
+###Part1: Data Cleaning and Word Frequencies
+#clean text
+clean_tweet2 = gsub("&amp", "", tweet2$text)
+clean_tweet2 = gsub("(RT|via)((?:\\b\\W*@\\w+)+)", "", clean_tweet2)
+clean_tweet2= gsub("@\\w+", "", clean_tweet2)
+clean_tweet2 = gsub("[[:punct:]]", "", clean_tweet2)
+clean_tweet2 = gsub("[[:digit:]]", "", clean_tweet2)
+clean_tweet2 = gsub("http\\w+", "", clean_tweet2)
+clean_tweet = gsub("[ \t]{2,}", "", clean_tweet2)
+clean_tweet2 = gsub("^\\s+|\\s+$", "", clean_tweet2)
+tweet2$text <- clean_tweet2
+#convert sentence into tidy text
+tidy_tweet <- tweet2 %>%
+  unnest_tokens(word, text)
+#clean stop words
+data(stop_words)
+tidy_tweet <- tidy_tweet %>%
+  anti_join(stop_words)
+tidy_tweet[1:10,]
+##sentiment analysis
+#we can check the freqencies of joy and anger or other kinds of emotional words for all the tweets
+nrc_joy <- get_sentiments("nrc") %>% filter(sentiment == "joy")
+nrc_anger <- get_sentiments("nrc") %>% filter(sentiment == "anger")
+tidy_tweet %>%
+  inner_join(nrc_joy) %>%
+  count(word, sort = TRUE)
+tidy_tweet %>%
+  inner_join(nrc_anger) %>%
+  count(word, sort = TRUE)
+tidy_cnt <- tidy_tweet %>%
+  count(word, sort = TRUE) 
+#use lexicon 'bing' to label words as positive/negative
+bing_word_counts <- tidy_tweet %>%
+  inner_join(get_sentiments("bing")) %>%
+  count(word, sentiment, sort = TRUE) %>%
+  ungroup()
+#plot the most frequent 20 positive/negative words
+bing_word_counts %>%
+  group_by(sentiment) %>%
+  top_n(20) %>%
+  ungroup() %>%
+  mutate(word = reorder(word, n)) %>%
+  ggplot(aes(word, n, fill = sentiment)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~sentiment, scales = "free_y") +
+  labs(y = "Contribution to sentiment",
+       x = NULL) +
+  coord_flip()
+#Plot word cloud for positive/negative words
+tidy_tweet %>%
+  inner_join(get_sentiments("bing")) %>%
+  count(word, sentiment, sort = TRUE) %>%
+  acast(word ~ sentiment, value.var = "n", fill = 0) %>%
+  comparison.cloud(colors = c("gray20", "tomato"),
+                   max.words = 100)
+##bigram analysis
+#extract bigrams from sentences
+tweet_bigrams <- tweet2 %>%
+  unnest_tokens(bigram, text, token = "ngrams", n = 2) %>%
+  na.omit()
+tweet_bigrams %>%
+  count(bigram, sort = TRUE)
+#clean stopwords
+bigrams_separated <- tweet_bigrams %>%
+  separate(bigram, c("word1", "word2"), sep = " ")
+bigrams_filtered <- bigrams_separated %>%
+  filter(!word1 %in% stop_words$word) %>%
+  filter(!word2 %in% stop_words$word)
+# new bigram counts
+bigram_counts <- bigrams_filtered %>% 
+  count(word1, word2, sort = TRUE)
+bigram_counts
+#use this function we can check the first word/second word with the other word given
+bigrams_separated %>%
+  filter(word1 == "gun") %>%
+  count(word2, sort = TRUE)
+#plot words'network with frequency larger than 10
+bigram_graph <- bigram_counts %>%
+  filter(n > 10) %>%
+  graph_from_data_frame()
+ggraph(bigram_graph, layout = "fr") +
+  geom_edge_link() +
+  geom_node_point() +
+  geom_node_text(aes(label = name), vjust = 1, hjust = 1)
+#similar graph with arrow to represent direction of words
+a <- grid::arrow(type = "closed", length = unit(.15, "inches"))
+ggraph(bigram_graph, layout = "fr") +
+  geom_edge_link(aes(edge_alpha = n), show.legend = FALSE,
+                 arrow = a, end_cap = circle(.07, 'inches')) +
+  geom_node_point(color = "lightblue", size = 5) +
+  geom_node_text(aes(label = name), vjust = 1, hjust = 1) +
+  theme_void()
+#calculate the phi correlation between words using each user id as a unit
+word_cors <- tidy_tweet %>%
+  group_by(word) %>%
+  filter(n() >= 20) %>%
+  pairwise_cor(word,user_id,sort = TRUE)
+#plot network plot for words with cor>0.6
+word_cors %>%
+  filter(correlation > .6) %>%
+  graph_from_data_frame() %>%
+  ggraph(layout = "fr") +
+  geom_edge_link(aes(edge_alpha = correlation), show.legend = FALSE) +
+  geom_node_point(color = "lightblue", size = 5) +
+  geom_node_text(aes(label = name), repel = TRUE) +
+  theme_void()
+#use this function to find the words most related to the given word
+word_cors %>%
+  filter(item2 == "gun")
+### Part3: Topic Modeling
+rowTotals <- apply(tweet_dtm , 1, sum) #Find the sum of words in each Document
+tweet_dtm   <- tweet_dtm[rowTotals> 0, ]           #remove all docs without words
+#assume there are 5 topics
+k = 5;
+SEED = 1234;
+#LDA with Gibbs Sampling
+tweet.lda <- LDA(tweet_dtm, k, method="Gibbs", control=list(seed = SEED))
+lda.topics <- as.matrix(topics(tweet.lda))
+#print the 10 most important words in the topic
+lda.terms <- terms(tweet.lda,10)
+lda.terms
