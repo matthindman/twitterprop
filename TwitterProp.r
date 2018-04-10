@@ -20,6 +20,12 @@ print(NikkiHello)
 
 SpencerHello <- "Hello world! This is Spencer."
 print(SpencerHello)
+<<<<<<< HEAD
+=======
+
+TaishiHello <- "Hello world! This is Taishi."
+print(TaishiHello)
+>>>>>>> 568a3513d9d078f959b783b8dbc9bf032850ad0d
 
 # setwd()   # set working directory here if needed
   
@@ -32,19 +38,29 @@ print(SpencerHello)
 # And then calling individual libraries only when needed.  
 
 
-list.of.packages <- c("tidyverse","tidytext","tm","chunked",     # basic data sci tools
+list.of.packages <- c("tidyverse","tidytext","tm","chunked",    # basic data sci tools
+                      "sparklyr","rsparkling",                  # spark db interface
+                      "h2o",                                    # big data ml on clusters
                       "twitteR","streamR","ROAuth","rtweet",    # twitter specific libs
-                      "lubridate",                               # time/ date tools
-                      "rrecsys","recosystem", "recommenderlab",  # recommender sys libs
-                      "shiny","shinydashboard",                  # shiny libs
-                      "network","igraph","tidygraph", "sna",     # graph / network libs
-                      "intergraph",                              # translation btwn graph libs
-                      "ggraph",                                  # network visualization libs
-                      "keras")                                   # TensorFlow. For fun. :) 
+                      "lubridate",                              # time/ date tools
+                      "rrecsys","recosystem", "recommenderlab", # recommender sys libs
+                      "shiny","shinydashboard",                 # shiny libs
+                      "network","igraph","tidygraph", "sna",    # graph / network libs
+                      "intergraph",                             # translation btwn graph libs
+                      "ggraph",                                 # network visualization libs
+                      "keras")                                  # TensorFlow. For fun. :) 
                       
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 
+
+# Install Mike Kearney's botornot tool
+
+if (!requireNamespace("devtools", quietly = TRUE)) {
+  install.packages("devtools")
+}
+devtools::install_github("mkearney/botornot")
+library(botornot)
 
 # TWITTER SPECIFIC LIBRARIES
 # Allow you to access / pull tweets directly from Twitter 
@@ -55,8 +71,8 @@ if(length(new.packages)) install.packages(new.packages)
 # Docs here: https://cran.r-project.org/web/packages/twitteR/twitteR.pdf and for rtweet
 # https://cran.r-project.org/web/packages/rtweet/rtweet.pdf 
 
-# library(twitteR)   # Twitter libs, but commented out for now
-# library(rtweet)   # Alternative Twitter library
+# library(twitteR)   # popular Twitter lib, but commented out for now
+library(rtweet)   # Alternative Twitter library. We'll try this to start with.  
 
 
 # RECOMMENDER SYSTEM LIBRARY
@@ -131,6 +147,7 @@ set.seed(8888)   # Note: Changing order may alter results.
 # Start with the sample code here:
 # https://rstudio.github.io/shinydashboard/get_started.html
 
+<<<<<<< HEAD
 #### CODE FOR TEXT MINING ####
 library(qdap)#Word Frequencies
 library(readr)#Read Data from CSV
@@ -320,3 +337,10 @@ lda.topics <- as.matrix(topics(tweet.lda))
 #print the 10 most important words in the topic
 lda.terms <- terms(tweet.lda,10)
 lda.terms
+=======
+# As an example, here is the Hamilton68 dashboard:
+# https://dashboard.securingdemocracy.org/ 
+
+
+
+>>>>>>> 568a3513d9d078f959b783b8dbc9bf032850ad0d
