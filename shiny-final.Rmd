@@ -1,7 +1,7 @@
 ---
 title: "shiny-final"
 author: "Yuzhou Tu"
-date: "05/07/2018"
+date: "06/18/2018"
 output: html_document
 ---
 
@@ -27,7 +27,7 @@ install.packages("tm")
 install.packages("wordcloud")
 install.packages("igraph")
 install.packages("ggraph")
-#install.packages("widyr")
+library(rsconnect)
 library(shiny)#Shiny App
 library(DBI)#Create a connection to a DBMS
 library("RMySQL")#Create a connection to a SQLite Database
@@ -43,11 +43,10 @@ library(tidyr)#Seperate bigrams to clean stopwords
 library(reshape2)#Use acast
 library(igraph)
 library(ggraph)
-#library(widyr)
 library(DT)#Create table in Shiny
 library(shinythemes)#Theme selection
+get_sentiments("bing")
 #please replace the directory in the following command with your own directory of fake.db
-mydb <- dbConnect(RSQLite :: SQLite(), dbname = "/Users/Duckburg/Dropbox/2018stat/6289-consulting/project2/shiny-fakeaccounts/Data/fake.db")
 pool <- dbPool(
   drv = RSQLite :: SQLite(),
   dbname = "/Users/Duckburg/Dropbox/2018stat/6289-consulting/project2/shiny-fakeaccounts/Data/fake.db"
@@ -110,7 +109,7 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
       numericInput("words", label = h3("Top n words in each topic"), value =10,max = 30),
       downloadButton('downloadData', 'Download')
     ),
-    # Show Word Cloud
+    # Show Top Word
     mainPanel(
       tabsetPanel(type = "tabs",
                   tabPanel("Top Words in Each Topic",dataTableOutput('table'))
@@ -126,7 +125,7 @@ server <- function(input, output, session) {
   ##Part 1:summary table to summarize number of tweets sent by users from each group
   output$Summary = renderDataTable({
     sql <- "SELECT text,user_id,group_name FROM temp WHERE parsed_created_at BETWEEN ?date1 AND ?date2;"
-    query <- sqlInterpolate(pool, sql,date1 = format(input$date1,format = "%Y-%m-%d"),date2=format(input$date2,format="%Y-%m-%d"))
+    query <- sqlInterpolate(pool,sql,date1 = format(input$date1,format = "%Y-%m-%d"),date2=format(input$date2,format="%Y-%m-%d"))
     df <- dbGetQuery(pool, query)
     #produce table
     datatable(as.data.frame(table(df$group_name)),colnames = c("Group", "Number of Tweets"))
@@ -202,19 +201,19 @@ server <- function(input, output, session) {
       sql <- "SELECT text,user_id FROM temp WHERE parsed_created_at BETWEEN ?date1 AND ?date2 and group_name =?group;"
       query  <- sqlInterpolate(pool, sql, group = input$group,date1 = format(input$date1,format = "%Y-%m-%d"),date2=format(input$date2,format="%Y-%m-%d"))
       df <- dbGetQuery(pool, query)
-      tweet <- tbl_df(df)
-      text2 <- as.character(tweet$text)
-      text2 <- iconv(text2, 'utf-8', 'ascii', sub='')
-      clean_tweet2 = gsub("&amp", "", text2)
-      clean_tweet2 = gsub("(RT|via)((?:\\b\\W*@\\w+)+)", "", clean_tweet2)
-      clean_tweet2 = gsub("@\\w+", "", clean_tweet2)
-      clean_tweet2 = gsub("[[:punct:]]", "", clean_tweet2)
-      clean_tweet2 = gsub("[[:digit:]]", "", clean_tweet2)
-      clean_tweet2 = gsub("http\\w+", "", clean_tweet2)
-      clean_tweet2 = gsub("[ \t]{2,}", "", clean_tweet2)
-      clean_tweet2 = gsub("^\\s+|\\s+$", "", clean_tweet2)
-      tweet$text <- clean_tweet2
-      tidy_tweet <- tweet %>%
+      tweet3 <- tbl_df(df)
+      text3 <- as.character(tweet3$text)
+      text3 <- iconv(text3, 'utf-8', 'ascii', sub='')
+      clean_tweet3 = gsub("&amp", "", text3)
+      clean_tweet3 = gsub("(RT|via)((?:\\b\\W*@\\w+)+)", "", clean_tweet3)
+      clean_tweet3 = gsub("@\\w+", "", clean_tweet3)
+      clean_tweet3 = gsub("[[:punct:]]", "", clean_tweet3)
+      clean_tweet3 = gsub("[[:digit:]]", "", clean_tweet3)
+      clean_tweet3 = gsub("http\\w+", "", clean_tweet3)
+      clean_tweet3 = gsub("[ \t]{2,}", "", clean_tweet3)
+      clean_tweet3 = gsub("^\\s+|\\s+$", "", clean_tweet3)
+      tweet3$text <- clean_tweet3
+      tidy_tweet <- tweet3 %>%
         unnest_tokens(word, text)
       tidy_tweet <- tidy_tweet %>%
         anti_join(stop_words)%>%
@@ -241,20 +240,20 @@ server <- function(input, output, session) {
       sql <- "SELECT text,user_id FROM temp WHERE parsed_created_at BETWEEN ?date1 AND ?date2 and group_name =?group;"
       query  <- sqlInterpolate(pool, sql, group = input$group,date1 = format(input$date1,format = "%Y-%m-%d"),date2=format(input$date2,format="%Y-%m-%d"))
       df <- dbGetQuery(pool, query)
-      tweet3 <- tbl_df(df)
-      text3 <- as.character(tweet3$text)
-      text3 <- iconv(text3, 'utf-8', 'ascii', sub='')
-      clean_tweet3 = gsub("&amp", "", text3)
-      clean_tweet3 = gsub("(RT|via)((?:\\b\\W*@\\w+)+)", "", clean_tweet3)
-      clean_tweet3 = gsub("@\\w+", "", clean_tweet3)
-      clean_tweet3 = gsub("[[:punct:]]", "", clean_tweet3)
-      clean_tweet3 = gsub("[[:digit:]]", "", clean_tweet3)
-      clean_tweet3 = gsub("http\\w+", "", clean_tweet3)
-      clean_tweet3= gsub("[ \t]{2,}", "", clean_tweet3)
-      clean_tweet3 = gsub("^\\s+|\\s+$", "", clean_tweet3)
-      tweet3$text <- clean_tweet3
+      tweet4 <- tbl_df(df)
+      text4 <- as.character(tweet4$text)
+      text4 <- iconv(text4, 'utf-8', 'ascii', sub='')
+      clean_tweet4 = gsub("&amp", "", text4)
+      clean_tweet4 = gsub("(RT|via)((?:\\b\\W*@\\w+)+)", "", clean_tweet4)
+      clean_tweet4 = gsub("@\\w+", "", clean_tweet4)
+      clean_tweet4 = gsub("[[:punct:]]", "", clean_tweet4)
+      clean_tweet4 = gsub("[[:digit:]]", "", clean_tweet4)
+      clean_tweet4 = gsub("http\\w+", "", clean_tweet4)
+      clean_tweet4= gsub("[ \t]{2,}", "", clean_tweet4)
+      clean_tweet4 = gsub("^\\s+|\\s+$", "", clean_tweet4)
+      tweet4$text <- clean_tweet4
       #seperate tweets into bigrams
-      tweet_bigrams <- tweet3 %>%
+      tweet_bigrams <- tweet4 %>%
         unnest_tokens(bigram, text, token = "ngrams", n = 2) %>%
         na.omit()
       #clean stopwords in bigrmas
@@ -281,23 +280,23 @@ server <- function(input, output, session) {
       sql <- "SELECT text,user_id FROM temp WHERE parsed_created_at BETWEEN ?date3 AND ?date4;"
       query <- sqlInterpolate(pool, sql,date3 = format(input$date3,format = "%Y-%m-%d"),date4=format(input$date4,format="%Y-%m-%d"))
       df <- dbGetQuery(pool, query)
-      tweet4 <- tbl_df(df)
-      text4 <- as.character(tweet4$text)
-      text4 <- iconv(text4, 'utf-8', 'ascii', sub='')
-      clean_tweet4 = gsub("&amp", "", text4)
-      clean_tweet4 = gsub("(RT|via)((?:\\b\\W*@\\w+)+)", "", clean_tweet4)
-      clean_tweet4 = gsub("@\\w+", "", clean_tweet4)
-      clean_tweet4 = gsub("[[:punct:]]", "", clean_tweet4)
-      clean_tweet4 = gsub("[[:digit:]]", "", clean_tweet4)
-      clean_tweet4 = gsub("http\\w+", "", clean_tweet4)
-      clean_tweet4 = gsub("[ \t]{2,}", "", clean_tweet4)
-      clean_tweet4 = gsub("^\\s+|\\s+$", "", clean_tweet4)
-      tweet4$text <- clean_tweet4
-      tidy_tweet4 <- tweet4 %>%
+      tweet5 <- tbl_df(df)
+      text5 <- as.character(tweet5$text)
+      text5 <- iconv(text5, 'utf-8', 'ascii', sub='')
+      clean_tweet5 = gsub("&amp", "", text5)
+      clean_tweet5 = gsub("(RT|via)((?:\\b\\W*@\\w+)+)", "", clean_tweet5)
+      clean_tweet5 = gsub("@\\w+", "", clean_tweet5)
+      clean_tweet5 = gsub("[[:punct:]]", "", clean_tweet5)
+      clean_tweet5 = gsub("[[:digit:]]", "", clean_tweet5)
+      clean_tweet5 = gsub("http\\w+", "", clean_tweet5)
+      clean_tweet5 = gsub("[ \t]{2,}", "", clean_tweet5)
+      clean_tweet5 = gsub("^\\s+|\\s+$", "", clean_tweet5)
+      tweet5$text <- clean_tweet5
+      tidy_tweet5 <- tweet5 %>%
         unnest_tokens(word, text)
-      tidy_tweet4 <- tidy_tweet4 %>%
+      tidy_tweet5 <- tidy_tweet5 %>%
         anti_join(stop_words)
-      tidy_tweet_id <- tidy_tweet4 %>%
+      tidy_tweet_id <- tidy_tweet5 %>%
         count(user_id, word)
       #create dtm according to user id
       new_dtm <- tidy_tweet_id %>%
